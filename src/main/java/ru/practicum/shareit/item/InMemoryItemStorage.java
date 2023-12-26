@@ -89,7 +89,7 @@ public class InMemoryItemStorage implements ItemStorage {
         return itemsList;
     }
 
-    private int getIndexForItem (long itemId, long userId) {
+    private int getIndexForItem(long itemId, long userId) {
         if (items.get(userId) == null) {
             throw new DataNotFoundException("У данного пользователя пуст список вещей!");
         }

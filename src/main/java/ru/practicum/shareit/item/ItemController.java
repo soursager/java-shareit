@@ -25,6 +25,7 @@ public class ItemController {
         log.info("Выполняется запрос на добавление вещи у пользователя {}", ownerId);
         return itemService.createItemDto(itemDto, ownerId);
     }
+
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable Long itemId, @RequestHeader(OWNER) Long ownerId) {
         log.info("Выполняется запрос на получение вещи под номером {}", itemId);

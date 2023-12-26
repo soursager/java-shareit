@@ -32,8 +32,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEmailIsAlreadyRegisteredException
-            (final EmailIsAlreadyRegisteredException e) {
+    public ErrorResponse handleEmailIsAlreadyRegisteredException(final EmailIsAlreadyRegisteredException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

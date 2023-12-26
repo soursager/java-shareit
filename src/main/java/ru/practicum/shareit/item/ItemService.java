@@ -18,12 +18,12 @@ public class ItemService {
         return mapper.toItemDto(itemStorage.create(mapper.toItem(itemDto), userId));
     }
 
-    public ItemDto updateItemDto (ItemDto itemDto, long userId, long itemId) {
+    public ItemDto updateItemDto(ItemDto itemDto, long userId, long itemId) {
          itemDto.setId(itemId);
          return mapper.toItemDto(itemStorage.update(mapper.toItem(itemDto), userId));
     }
 
-    public ItemDto getItemDtoById (long itemId, long userId) {
+    public ItemDto getItemDtoById(long itemId, long userId) {
         return mapper.toItemDto(itemStorage.getItemById(itemId, userId));
     }
 

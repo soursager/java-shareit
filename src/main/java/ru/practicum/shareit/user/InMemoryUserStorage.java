@@ -44,8 +44,8 @@ public class InMemoryUserStorage implements UserStorage {
                 .allMatch(us -> us.getId().equals(user.getId()))) {
             users.put(user.getId(), user);
         } else {
-            throw new EmailIsAlreadyRegisteredException
-                    ("Пользователь с E-mail=" + user.getEmail() + " уже существует!");
+            throw new EmailIsAlreadyRegisteredException("Пользователь с E-mail="
+                    + user.getEmail() + " уже существует!");
         }
         return user;
     }
