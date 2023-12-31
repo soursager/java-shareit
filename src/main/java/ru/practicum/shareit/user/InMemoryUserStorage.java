@@ -11,7 +11,7 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Long, User> users = new HashMap<>();
+    public  Map<Long, User> users = new HashMap<>();
     private Long userId = 0L;
 
     @Override

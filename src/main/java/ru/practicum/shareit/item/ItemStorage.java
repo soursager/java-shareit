@@ -6,11 +6,11 @@ import java.util.Collection;
 
 public interface ItemStorage {
 
-    Item create(Item item, Long userId);
+    Item create(Item item);
 
-    Item update(Item item, long userId);
+    Item update(Item item, Long userId);
 
-    Item getItemById(long itemId, long userId);
+    Item getItemById(long itemId);
 
     Collection<Item> getItemsByUserId(long userId);
 

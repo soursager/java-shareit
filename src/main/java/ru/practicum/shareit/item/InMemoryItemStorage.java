@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.DataNotFoundException;
 import ru.practicum.shareit.exception.DataValidationException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,33 +12,30 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class InMemoryItemStorage implements ItemStorage {
-    private final UserStorage userStorage;
-    private final Map<Long, List<Item>> items = new HashMap<>();
+    private final Map<Long, Item> items = new HashMap<>();
     private Long itemId = 0L;
 
     @Override
-    public Item create(Item item, Long userId) {
-        item.setOwner(userStorage.getUserById(userId));
+    public Item create(Item item) {
         if (isValidItem(item)) {
             item.setId(++itemId);
-        }
-        if (items.containsKey(userId)) {
-            items.get(userId).add(item);
-        } else {
-            ArrayList<Item> itemsForUser = new ArrayList<>();
-            itemsForUser.add(item);
-            items.put(userId, itemsForUser);
+            items.put(item.getId(), item);
         }
         return item;
     }
 
     @Override
-    public Item update(Item item, long userId) {
+    public Item update(Item item, Long userId) {
         if (item.getId() == null) {
             throw new DataValidationException("Не передан параметр!");
         }
-        int index = getIndexForItem(item.getId(), userId);
-        Item itemOld = items.get(userId).get(index);
+        if (!items.containsKey(item.getId())) {
+            throw new DataNotFoundException("Вещь под номером " + item.getId() + " не найдена!");
+        }
+        Item itemOld = items.get(item.getId());
+        if (!itemOld.getOwner().getId().equals(userId)) {
+            throw new DataNotFoundException("У пользователя нет такой вещи!");
+        }
         if (item.getName() == null) {
             item.setName(itemOld.getName());
         }
@@ -49,28 +45,24 @@ public class InMemoryItemStorage implements ItemStorage {
         if (item.getAvailable() == null) {
             item.setAvailable(itemOld.getAvailable());
         }
-        items.get(userId).set(index, item);
+        item.setOwner(itemOld.getOwner());
+        items.put(item.getId(), item);
         return item;
     }
 
     @Override
-    public Item getItemById(long itemId, long userId) {
-        Item itemFromId = null;
-        for (long userIdForSearch : items.keySet()) {
-            itemFromId = items.get(userIdForSearch).stream()
-                    .filter(x -> x.getId() == itemId)
-                    .findFirst()
-                    .orElse(null);
+    public Item getItemById(long itemId) {
+        if (!items.containsKey(itemId)) {
+            throw new DataNotFoundException("Вещь под номером " + itemId + " не найдена!");
         }
-        if (itemFromId == null) {
-            throw new DataNotFoundException("Данной вещи не существует!");
-        }
-        return itemFromId;
+        return items.get(itemId);
     }
 
     @Override
     public Collection<Item> getItemsByUserId(long userId) {
-        return items.get(userId);
+        return items.values().stream()
+                .filter(item -> item.getOwner().getId().equals(userId))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -79,28 +71,12 @@ public class InMemoryItemStorage implements ItemStorage {
         if (text.isBlank()) {
             return itemsList;
         }
-        for (long userId : items.keySet()) {
-            itemsList.addAll(items.get(userId).stream()
+            itemsList.addAll(items.values().stream()
                     .filter(item -> item.getAvailable().equals(true))
                     .filter(item -> item.getName().toLowerCase().contains(text) ||
                             item.getDescription().toLowerCase().contains(text))
                     .collect(Collectors.toList()));
-        }
         return itemsList;
-    }
-
-    private int getIndexForItem(long itemId, long userId) {
-        if (items.get(userId) == null) {
-            throw new DataNotFoundException("У данного пользователя пуст список вещей!");
-        }
-        Item itemOld = items.get(userId).stream()
-                .filter(i -> i.getId().equals(itemId))
-                .findFirst()
-                .orElse(null);
-        if (itemOld == null) {
-            throw new DataNotFoundException("Данный пользователь не является хозяином вещи!");
-        }
-        return items.get(userId).indexOf(itemOld);
     }
 
     private boolean isValidItem(Item item) {
