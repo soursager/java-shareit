@@ -20,7 +20,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto createItemDto(ItemDto itemDto, Long userId) {
         Item newItem = mapper.toItem(itemDto);
-        if(userStorage.getUserById(userId) != null) {
+        if (userStorage.getUserById(userId) != null) {
             newItem.setOwner(userStorage.getUserById(userId));
         }
         return mapper.toItemDto(itemStorage.create(newItem));
