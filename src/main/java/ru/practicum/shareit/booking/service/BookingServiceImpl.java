@@ -189,6 +189,7 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookings.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
     }
+
     private UserDto checkingUserId(Long userId) {
         if (userId == -1) {
             throw new DataNotFoundException("Пользователя под номером : " + userId + " не существует!");
