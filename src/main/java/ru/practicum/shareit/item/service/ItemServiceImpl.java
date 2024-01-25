@@ -78,16 +78,13 @@ public class ItemServiceImpl implements ItemService {
                     .orElseThrow(() -> new DataNotFoundException("Несуществующий предмет под номером " + itemId)),
                     bookingsForItem, commentsForItem);
         } else if (!bookingsForItem.isEmpty()) {
-            return ItemMapper.toItemDtoWithBookings(itemRepository.findById(itemId)
-                    .orElseThrow(() -> new DataNotFoundException("Несуществующий предмет под номером " + itemId)),
-                    bookingsForItem);
-        } else if (commentsForItem != null || !commentsForItem.isEmpty()) {
-            return ItemMapper.toItemDtoWithComments(itemRepository.findById(itemId)
-                    .orElseThrow(() -> new DataNotFoundException("Несуществующий предмет под номером " + itemId)),
-                    commentsForItem);
+            return ItemMapper.toItemDtoWithBookingsAndComments(itemRepository.findById(itemId)
+                            .orElseThrow(() -> new DataNotFoundException("Несуществующий предмет под номером " + itemId)),
+                    bookingsForItem, commentsForItem);
         } else {
-            return ItemMapper.toItemDto(itemRepository.findById(itemId)
-                    .orElseThrow(() -> new DataNotFoundException("Несуществующий предмет под номером " + itemId)));
+            return ItemMapper.toItemDtoWithComments(itemRepository.findById(itemId)
+                            .orElseThrow(() -> new DataNotFoundException("Несуществующий предмет под номером " + itemId)),
+                    commentsForItem);
         }
     }
 
