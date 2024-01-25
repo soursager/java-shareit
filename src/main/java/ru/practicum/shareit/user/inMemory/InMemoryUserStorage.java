@@ -1,10 +1,11 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.inMemory;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.DataNotFoundException;
 import ru.practicum.shareit.exception.EmailIsAlreadyRegisteredException;
 import ru.practicum.shareit.exception.DataValidationException;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 

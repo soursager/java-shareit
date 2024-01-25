@@ -4,10 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.DataNotFoundException;
-import ru.practicum.shareit.exception.DataValidationException;
-import ru.practicum.shareit.exception.EmailIsAlreadyRegisteredException;
-import ru.practicum.shareit.exception.SearchQueryException;
+import ru.practicum.shareit.exception.*;
 
 
 @RestControllerAdvice
@@ -27,6 +24,12 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleDataValidationException(final DataValidationException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDataStatusException(final UnsupportedStatusException e) {
         return new ErrorResponse(e.getMessage());
     }
 

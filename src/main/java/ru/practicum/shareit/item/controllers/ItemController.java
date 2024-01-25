@@ -1,11 +1,14 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 /**
@@ -48,5 +51,13 @@ public class ItemController {
     public Collection<ItemDto> getItemsBySearchQuery(@RequestParam String text) {
         log.info("Выполняется запрос поиска вещи по строке {}", text);
         return itemService.getItemsDtoBySearch(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createCommentToItem(@PathVariable Long itemId, @RequestBody CommentDto comment,
+                                          @RequestHeader(OWNER) Long userId) {
+        log.debug("Creating comment to item by userId {}", userId);
+        comment.setCreated(LocalDateTime.now());
+        return itemService.addCommentToItem((long) userId, itemId, comment);
     }
 }
