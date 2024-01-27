@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DataNotFoundException;
 import ru.practicum.shareit.exception.DataValidationException;
 import ru.practicum.shareit.exception.EmailIsAlreadyRegisteredException;
@@ -13,6 +14,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public UserDto createUserDto(UserDto userDto) {
         try {
@@ -29,12 +32,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserDto getUserDto(long id) {
         return UserMapper.toUserDto(userRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Данного пользователя нет в базе!")));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Collection<UserDto> getUsersDto() {
         return userRepository.findAll().stream()
@@ -42,6 +47,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public UserDto updateUserDto(UserDto userDto, Long userId) {
         User user = userRepository.findById(userId)
@@ -53,10 +59,7 @@ public class UserServiceImpl implements UserService {
             user.setName(userDto.getName());
         }
         if ((userDto.getEmail() != null) && (!userDto.getEmail().equals(user.getEmail()))) {
-            if (userRepository.findByEmail(userDto.getEmail())
-                    .stream()
-                    .filter(u -> u.getEmail().equals(userDto.getEmail()))
-                    .allMatch(u -> u.getId().equals(userDto.getId()))) {
+            if (checkingTheUserEmail(userDto)) {
                 user.setEmail(userDto.getEmail());
             } else {
                 throw new EmailIsAlreadyRegisteredException("Пользователь с E-mail="
@@ -66,6 +69,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public void delete(long id) {
         try {
@@ -73,5 +77,13 @@ public class UserServiceImpl implements UserService {
         } catch (EmptyResultDataAccessException e) {
             throw new DataNotFoundException("Данного пользователя нет в базе!");
         }
+    }
+
+    private boolean checkingTheUserEmail (UserDto userDto) {
+        List<User> userForEmail = userRepository.findByEmail(userDto.getEmail());
+        return userForEmail
+                .stream()
+                .filter(u -> u.getEmail().equals(userDto.getEmail()))
+                .allMatch(u -> u.getId().equals(userDto.getId()));
     }
 }

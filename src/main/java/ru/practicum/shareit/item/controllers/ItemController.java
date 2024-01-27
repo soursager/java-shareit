@@ -56,7 +56,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto createCommentToItem(@PathVariable Long itemId, @RequestBody CommentDto comment,
                                           @RequestHeader(OWNER) Long userId) {
-        log.debug("Creating comment to item by userId {}", userId);
+        log.debug("Создание комментария к элементу по идентификатору пользователя {}", userId);
         comment.setCreated(LocalDateTime.now());
         return itemService.addCommentToItem((long) userId, itemId, comment);
     }

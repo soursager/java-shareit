@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -33,6 +34,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     @Override
     public ItemDto createItemDto(ItemDto itemDto, Long userId) {
         Item newItem = ItemMapper.toItem(itemDto);
@@ -40,6 +42,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(itemRepository.save(newItem));
     }
 
+    @Transactional
     @Override
     public ItemDto updateItemDto(ItemDto itemDto, long userId, long itemId) {
          checkingUserId(userId);
@@ -61,6 +64,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(itemOld);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ItemDto getItemDtoById(long itemId, long userId) {
         checkingUserId(userId);
@@ -88,6 +92,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Collection<ItemDto> getItemsDtoByUserId(long userId) {
         UserDto userFromDb = checkingUserId(userId);
@@ -118,6 +123,7 @@ public class ItemServiceImpl implements ItemService {
         return results;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Collection<ItemDto> getItemsDtoBySearch(String text) {
         if (text.isEmpty()) {
@@ -128,10 +134,11 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public CommentDto addCommentToItem(Long userId, Long itemId, CommentDto commentDto) {
         if (commentDto.getText().isEmpty()) {
-            throw new DataValidationException("Comment text cant be empty!");
+            throw new DataValidationException("Комментарий не может быть пустым");
         }
         UserDto author = checkingUserId(userId);
         List<BookingDto> bookings = bookingRepository.findAllByUserIdAndItemIdAndEndDateIsPassed(userId, itemId,
@@ -140,7 +147,7 @@ public class ItemServiceImpl implements ItemService {
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
         if (bookings.isEmpty()) {
-            throw new DataValidationException("This user has no booking");
+            throw new DataValidationException("Данный пользователь не бронировал вещь");
         }
         ItemDto item = getItemDtoById(itemId, userId);
         commentDto = CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto,
@@ -160,10 +167,10 @@ public class ItemServiceImpl implements ItemService {
 
     private UserDto checkingUserId(long userId) {
         if (userId == -1) {
-            throw new DataNotFoundException("There is no user with header-Id : " + userId);
+            throw new DataNotFoundException("Необходим номер пользователя");
         }
         return UserMapper.toUserDto(userRepository.findById(userId).orElseThrow(() ->
-                new DataNotFoundException("There is no user : " + userId)));
+                new DataNotFoundException("Польователя под номером " + userId + " не существует!")));
     }
 
     private List<BookingDto> getOwnerBooking(Long ownerId) {

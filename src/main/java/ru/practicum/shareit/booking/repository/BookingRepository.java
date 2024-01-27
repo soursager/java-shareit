@@ -16,63 +16,63 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItem_Owner_Id(Long ownerId);
 
-    @Query("select b " +
-             "from Booking b " +
-             "where b.item.id = :itemId AND b.booker.id = :bookerId AND b.end <= :now")
+    @Query("SELECT b " +
+             "FROM Booking b " +
+             "WHERE b.item.id = :itemId AND b.booker.id = :bookerId AND b.end <= :now")
      List<Booking> findAllByUserIdAndItemIdAndEndDateIsPassed(Long bookerId, Long itemId, LocalDateTime now);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.item.id IN :itemsIds")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.item.id IN :itemsIds")
     List<Booking> findAllByOwnerItems(List<Long> itemsIds, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.item.id IN :itemsIds AND b.status = :waiting")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.item.id IN :itemsIds AND b.status = :waiting")
     List<Booking> findAllByOwnerItemsAndWaitingStatus(List<Long> itemsIds, BookingStatus waiting, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.item.id IN :itemsIds AND b.status IN :rejected")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.item.id IN :itemsIds AND b.status IN :rejected")
     List<Booking> findAllByOwnerItemsAndRejectedStatus(List<Long> itemsIds, List<BookingStatus> rejected, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.item.id IN :itemsIds AND b.start < :now AND b.end > :now")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.item.id IN :itemsIds AND b.start < :now AND b.end > :now")
     List<Booking> findAllByOwnerItemsAndCurrentStatus(List<Long> itemsIds, LocalDateTime now, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.item.id IN :itemsIds AND b.start > :now")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.item.id IN :itemsIds AND b.start > :now")
     List<Booking> findAllByOwnerItemsAndFutureStatus(List<Long> itemsIds, LocalDateTime now, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.item.id IN :itemsIds AND b.end < :now")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.item.id IN :itemsIds AND b.end < :now")
     List<Booking> findAllByOwnerItemsAndPastStatus(List<Long> itemsIds, LocalDateTime now, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.booker.id = :bookerId AND b.status = :waiting")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.booker.id = :bookerId AND b.status = :waiting")
     List<Booking> findAllByBookerIdAndWaitingStatus(Long bookerId, BookingStatus waiting, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.booker.id = :bookerId AND b.status IN :rejected")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.booker.id = :bookerId AND b.status IN :rejected")
     List<Booking> findAllByBookerIdAndRejectedStatus(Long bookerId, List<BookingStatus> rejected, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.booker.id = :bookerId AND b.start < :now AND b.end > :now ")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.booker.id = :bookerId AND b.start < :now AND b.end > :now ")
     List<Booking> findAllByBookerIdAndCurrentStatus(Long bookerId, LocalDateTime now, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.booker.id = :bookerId AND b.start > :now ")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.booker.id = :bookerId AND b.start > :now ")
     List<Booking> findAllByBookerIdAndFutureStatus(Long bookerId, LocalDateTime now, Sort sort);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.booker.id = :bookerId AND b.end < :now")
+    @Query("SELECT b " +
+            "FROM Booking b " +
+            "WHERE b.booker.id = :bookerId AND b.end < :now")
     List<Booking> findAllByBookerIdAndPastStatus(Long bookerId, LocalDateTime now, Sort sort);
 }
