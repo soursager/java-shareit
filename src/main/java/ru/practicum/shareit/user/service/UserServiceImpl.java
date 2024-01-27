@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private boolean checkingTheUserEmail (UserDto userDto) {
+    private boolean checkingTheUserEmail(UserDto userDto) {
         List<User> userForEmail = userRepository.findByEmail(userDto.getEmail());
         return userForEmail
                 .stream()

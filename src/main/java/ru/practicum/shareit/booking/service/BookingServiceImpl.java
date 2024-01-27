@@ -209,6 +209,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UnsupportedStatusException("Unknown state: " + state);
         }
     }
+
     private boolean checkingTheCreationTime(BookingDto bookingDto) {
         boolean endIsBeforeStart = bookingDto.getEnd().isBefore(bookingDto.getStart());
         boolean startIsEqualEnd = bookingDto.getStart().isEqual(bookingDto.getEnd());
