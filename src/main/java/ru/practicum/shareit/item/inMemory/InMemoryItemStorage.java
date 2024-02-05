@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.inMemory;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
