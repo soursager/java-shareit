@@ -30,7 +30,7 @@ public class BookingValidatorTest {
         UnsupportedStatusException exception = assertThrows(UnsupportedStatusException.class,
                 () -> bookingValidator.checkingBookingState("NOT"));
 
-        assertEquals(exception.getMessage(), "Unknown state: NOT" );
+        assertEquals(exception.getMessage(), "Unknown state: NOT");
     }
 
     @Test
