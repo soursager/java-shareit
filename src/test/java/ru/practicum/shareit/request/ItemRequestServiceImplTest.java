@@ -36,7 +36,7 @@ public class ItemRequestServiceImplTest {
     private ItemRequest itemRequest;
 
     @Mock
-    RequestRepository RequestRepository;
+    RequestRepository requestRepository;
 
     @Mock
     UserValidator userValidator;
@@ -77,7 +77,7 @@ public class ItemRequestServiceImplTest {
     void addNewRequest_whenUserExists_thenReturnItemRequestDto() {
         itemRequest.setResponsesToRequest(List.of(item));
         when(userValidator.returnUserIfExists(anyLong())).thenReturn(owner);
-        when(RequestRepository.save(any(ItemRequest.class))).thenReturn(itemRequest);
+        when(requestRepository.save(any(ItemRequest.class))).thenReturn(itemRequest);
 
         ItemRequestDto actualRequest = requestService.addNewRequest(toItemRequestDto(itemRequest), 1L);
 
@@ -88,7 +88,7 @@ public class ItemRequestServiceImplTest {
 
     @Test
     void addNewRequest_whenUserNotExists_thenThrowEntityNotFoundException() {
-        when(RequestRepository.save(any(ItemRequest.class)))
+        when(requestRepository.save(any(ItemRequest.class)))
                 .thenThrow(new DataNotFoundException("Пользователь не существует!"));
 
         DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
@@ -112,7 +112,7 @@ public class ItemRequestServiceImplTest {
     @Test
     void getAllUserRequestsWithResponses_whenUserExists_thenReturnListOfResponses() {
         doNothing().when(userValidator).checkingUserIdAndNotReturns(anyLong());
-        when(RequestRepository.findAllByRequester_Id(anyLong())).thenReturn(List.of(new ItemRequest()));
+        when(requestRepository.findAllByRequester_Id(anyLong())).thenReturn(List.of(new ItemRequest()));
 
         List<ItemRequestDto> requests = new ArrayList<>(requestService.getAllUserRequestsWithResponses(1L));
 
@@ -133,7 +133,7 @@ public class ItemRequestServiceImplTest {
     @Test
     void getAllRequestsToResponse_whenUserExists_thenReturnListOfRequests() {
         doNothing().when(userValidator).checkingUserIdAndNotReturns(anyLong());
-        when(RequestRepository.findAllByAllOtherUsers(anyLong(),
+        when(requestRepository.findAllByAllOtherUsers(anyLong(),
                 any(Pageable.class))).thenReturn(List.of(new ItemRequest()));
 
         List<ItemRequestDto> requests = new ArrayList<>(requestService.getAllRequestsToResponse(1L,

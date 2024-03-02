@@ -61,7 +61,7 @@ public class ItemController {
                                                      @RequestParam(defaultValue = "10") Integer size) {
         validator.checkingPageableParams(from, size);
         log.info("Выполняется запрос поиска вещи по строке {}", text);
-        Pageable page = PageRequest.of(from/size, size);
+        Pageable page = PageRequest.of(from / size, size);
         return itemService.getItemsDtoBySearch(text, page);
     }
 
