@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -37,6 +38,8 @@ public class Item {
     @JoinColumn(name = "owner_id")
     private User owner;              // владелец вещи
 
-    private Long requestId;     // если вещь была создана по запросу другого пользователя, то в этом
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    private ItemRequest request;     // если вещь была создана по запросу другого пользователя, то в этом
                                      // поле хранится ссылка на соответствующий запрос
 }

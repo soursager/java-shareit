@@ -29,6 +29,12 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlePageValidationException(final IncorrectNumberPageException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleDataStatusException(final UnsupportedStatusException e) {
         return new ErrorResponse(e.getMessage());
     }

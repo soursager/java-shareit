@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DataNotFoundException;
@@ -12,6 +11,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.validator.UserValidator;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserValidator userValidator;
 
     @Transactional
     @Override
@@ -50,8 +51,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto updateUserDto(UserDto userDto, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new DataNotFoundException("Данного пользователя нет в базе!"));
+        User user = userValidator.returnUserIfExists(userId);
         if (userDto.getId() == null) {
             throw new DataValidationException("Не передан номер пользователя!");
         }
@@ -72,11 +72,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void delete(long id) {
-        try {
+        userValidator.checkingUserIdAndNotReturns(id);
             userRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new DataNotFoundException("Данного пользователя нет в базе!");
-        }
     }
 
     private boolean checkingTheUserEmail(UserDto userDto) {

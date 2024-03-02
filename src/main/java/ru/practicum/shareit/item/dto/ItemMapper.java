@@ -5,6 +5,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public class ItemMapper {
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .owner(item.getOwner() != null ? item.getOwner() : null)
-                .requestId(item.getRequestId())
+                .request(item.getRequest())
                 .build();
     }
 
@@ -30,7 +32,7 @@ public class ItemMapper {
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
-                .requestId(itemDto.getRequestId() != null ? itemDto.getRequestId() : null)
+                .request(itemDto.getRequest() != null ? itemDto.getRequest() : null)
                 .build();
     }
 
@@ -77,5 +79,28 @@ public class ItemMapper {
         ItemDto itemDto = toItemDto(item);
         itemDto.setComments(comments != null ? comments : new ArrayList<>());
         return itemDto;
+    }
+
+    public static ItemDto toItemDtoWithRequestId(Item item) {
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .owner(item.getOwner() != null ? item.getOwner() : null)
+                .comments(new ArrayList<>())
+                .requestId(item.getRequest().getId())
+                .build();
+    }
+
+    public static Item toItemDbWithRequest(ItemDto itemDto, User user, ItemRequest request) {
+        return Item.builder()
+                .id(itemDto.getId() != null ? itemDto.getId() : 0)
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .owner(user)
+                .request(request)
+                .build();
     }
 }
