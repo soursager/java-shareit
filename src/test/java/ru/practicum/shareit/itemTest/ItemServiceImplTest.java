@@ -59,7 +59,7 @@ public class ItemServiceImplTest {
     @Mock
     ItemValidator itemValidator;
     @InjectMocks
-    ItemServiceImpl itemService;
+    ItemServiceImpl itemServiceImpl;
 
     @BeforeEach
     public void fillData() {
@@ -92,7 +92,7 @@ public class ItemServiceImplTest {
         when(itemRepository.save(item))
                 .thenReturn(item);
 
-        ItemDto actualItem = itemService.createItemDto(toItemDto(item), 1L);
+        ItemDto actualItem = itemServiceImpl.createItemDto(toItemDto(item), 1L);
 
         assertEquals(item.getName(), actualItem.getName());
     }
@@ -105,7 +105,7 @@ public class ItemServiceImplTest {
         when(itemRequestRepository.findById(1L))
                 .thenReturn(Optional.of(request));
 
-        ItemDto actualItem = itemService.createItemDto(toItemDtoWithRequestId(item), 1L);
+        ItemDto actualItem = itemServiceImpl.createItemDto(toItemDtoWithRequestId(item), 1L);
 
         assertEquals(item.getName(), actualItem.getName());
         assertEquals(item.getRequest().getId(), actualItem.getRequestId());
@@ -118,7 +118,7 @@ public class ItemServiceImplTest {
                 .thenThrow(new DataNotFoundException("Ошибка!"));
 
         DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
-                () -> itemService.createItemDto(toItemDto(item), 1L));
+                () -> itemServiceImpl.createItemDto(toItemDto(item), 1L));
         assertEquals(dataNotFoundException.getMessage(), "Ошибка!");
     }
 
@@ -127,7 +127,7 @@ public class ItemServiceImplTest {
         when(itemRepository.save(item)).thenReturn(item);
         when(itemValidator.validateItemId(1L)).thenReturn(item);
         doNothing().when(userValidator).checkingUserIdAndNotReturns(1L);
-        ItemDto actualItem = itemService.updateItemDto(toItemDto(item), 1L, 1L);
+        ItemDto actualItem = itemServiceImpl.updateItemDto(toItemDto(item), 1L, 1L);
 
         assertEquals(item.getName(), actualItem.getName());
         verify(userValidator, times(0)).checkingUserId(1L);
@@ -139,7 +139,7 @@ public class ItemServiceImplTest {
                 .when(userValidator).checkingUserIdAndNotReturns(1L);
 
         DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
-                () -> itemService.updateItemDto(toItemDto(item), 1L, 1L));
+                () -> itemServiceImpl.updateItemDto(toItemDto(item), 1L, 1L));
 
         assertEquals(dataNotFoundException.getMessage(), "Пользователя не существует!");
     }
@@ -154,7 +154,7 @@ public class ItemServiceImplTest {
                 .thenThrow(new DataNotFoundException("Несуществующая вещь!"));
 
         DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
-                () -> itemService.updateItemDto(toItemDto(expectedItem), 1L, 1L));
+                () -> itemServiceImpl.updateItemDto(toItemDto(expectedItem), 1L, 1L));
 
         assertEquals(dataNotFoundException.getMessage(), "Несуществующая вещь!");
     }
@@ -163,7 +163,7 @@ public class ItemServiceImplTest {
     void getItemById_whenItemAndUserExists_thenReturnItem() {
         doNothing().when(userValidator).checkingUserIdAndNotReturns(1L);
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-        ItemDto actualItem = itemService.getItemDtoById(1L, 1L);
+        ItemDto actualItem = itemServiceImpl.getItemDtoById(1L, 1L);
         assertEquals(item.getId(), actualItem.getId());
     }
 
@@ -172,7 +172,7 @@ public class ItemServiceImplTest {
         doThrow(new DataNotFoundException("Пользователь не существует")).when(userValidator).checkingUserIdAndNotReturns(1L);
 
         DataNotFoundException entityNotFoundException = assertThrows(DataNotFoundException.class,
-                () -> itemService.getItemDtoById(1L, 1L));
+                () -> itemServiceImpl.getItemDtoById(1L, 1L));
 
         assertEquals(entityNotFoundException.getMessage(), "Пользователь не существует");
     }
@@ -184,7 +184,7 @@ public class ItemServiceImplTest {
                 .thenThrow(new DataNotFoundException("Несуществующая вещь!"));
 
         DataNotFoundException entityNotFoundException = assertThrows(DataNotFoundException.class,
-                () -> itemService.getItemDtoById(1L, 1L));
+                () -> itemServiceImpl.getItemDtoById(1L, 1L));
 
         assertEquals(entityNotFoundException.getMessage(), "Несуществующая вещь!");
     }
@@ -203,7 +203,7 @@ public class ItemServiceImplTest {
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         when(bookingRepository.findAllByItem_Owner_Id(1L)).thenReturn(bookings);
 
-        ItemDto actualItem = itemService.getItemDtoById(1L, 1L);
+        ItemDto actualItem = itemServiceImpl.getItemDtoById(1L, 1L);
 
         assertEquals(item.getId(), actualItem.getId());
         assertEquals(actualItem.getLastBooking().getBookerId(), 1L);
@@ -221,7 +221,7 @@ public class ItemServiceImplTest {
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         when(commentRepository.findAllByItem_Id(1L)).thenReturn(comments);
 
-        ItemDto actualItem = itemService.getItemDtoById(1L, 1L);
+        ItemDto actualItem = itemServiceImpl.getItemDtoById(1L, 1L);
 
         assertEquals(item.getId(), actualItem.getId());
         assertEquals(actualItem.getComments().size(), 1);
@@ -248,7 +248,7 @@ public class ItemServiceImplTest {
         when(bookingRepository.findAllByItem_Owner_Id(1L)).thenReturn(bookings);
         when(commentRepository.findAllByItem_Id(1L)).thenReturn(comments);
 
-        ItemDto actualItem = itemService.getItemDtoById(1L, 1L);
+        ItemDto actualItem = itemServiceImpl.getItemDtoById(1L, 1L);
 
         assertEquals(item.getId(), actualItem.getId());
         assertEquals(actualItem.getComments().size(), 1);
@@ -261,7 +261,7 @@ public class ItemServiceImplTest {
         doNothing().when(userValidator).checkingUserIdAndNotReturns(1L);
         when(itemRepository.findByOwner_Id(1L, pageForItems)).thenReturn(List.of(new Item()));
 
-        Collection<ItemDto> userItems = itemService.getItemsDtoByUserId(1L, pageForItems);
+        Collection<ItemDto> userItems = itemServiceImpl.getItemsDtoByUserId(1L, pageForItems);
 
         assertEquals(userItems.size(), 1);
     }
@@ -272,7 +272,7 @@ public class ItemServiceImplTest {
         doThrow(new DataNotFoundException("Пользователь не существует")).when(userValidator).checkingUserIdAndNotReturns(1L);
 
         DataNotFoundException entityNotFoundException = assertThrows(DataNotFoundException.class,
-                () -> itemService.getItemsDtoByUserId(1L, pageForItems));
+                () -> itemServiceImpl.getItemsDtoByUserId(1L, pageForItems));
 
         assertEquals(entityNotFoundException.getMessage(), "Пользователь не существует");
     }
@@ -290,7 +290,7 @@ public class ItemServiceImplTest {
         when(itemRepository.findByOwner_Id(1L, pageForItems)).thenReturn(List.of(item));
         when(commentRepository.findAllByItemsUser_Id(1L, pageForComments)).thenReturn(comments);
 
-        Collection<ItemDto> userItems = itemService.getItemsDtoByUserId(1L, pageForItems);
+        Collection<ItemDto> userItems = itemServiceImpl.getItemsDtoByUserId(1L, pageForItems);
         List<ItemDto> items = new ArrayList<>(userItems);
 
         assertEquals(userItems.size(), 1);
@@ -311,7 +311,7 @@ public class ItemServiceImplTest {
         when(itemRepository.findByOwner_Id(1L, pageForItems)).thenReturn(List.of(item));
         when(bookingRepository.findAllByItem_Owner_Id(1L)).thenReturn(bookings);
 
-        Collection<ItemDto> userItems = itemService.getItemsDtoByUserId(1L, pageForItems);
+        Collection<ItemDto> userItems = itemServiceImpl.getItemsDtoByUserId(1L, pageForItems);
         List<ItemDto> items = new ArrayList<>(userItems);
 
         assertEquals(userItems.size(), 1);
@@ -339,7 +339,7 @@ public class ItemServiceImplTest {
         when(bookingRepository.findAllByItem_Owner_Id(1L)).thenReturn(bookings);
         when(commentRepository.findAllByItemsUser_Id(1L, pageForComments)).thenReturn(comments);
 
-        Collection<ItemDto> userItems = itemService.getItemsDtoByUserId(1L, pageForItems);
+        Collection<ItemDto> userItems = itemServiceImpl.getItemsDtoByUserId(1L, pageForItems);
         List<ItemDto> items = new ArrayList<>(userItems);
 
         assertEquals(userItems.size(), 1);
@@ -358,7 +358,7 @@ public class ItemServiceImplTest {
         String search = "DesC";
         when(itemRepository.getItemsBySearchQuery("DesC", page)).thenReturn(List.of(item));
 
-        Collection<ItemDto> items = itemService.getItemsDtoBySearch(search, page);
+        Collection<ItemDto> items = itemServiceImpl.getItemsDtoBySearch(search, page);
         List<ItemDto> itemsList = new ArrayList<>(items);
 
         assertEquals(itemsList.size(), 1);
@@ -371,7 +371,7 @@ public class ItemServiceImplTest {
         String search = "DesC";
         when(itemRepository.getItemsBySearchQuery("DesC", page)).thenReturn(new ArrayList<>());
 
-        Collection<ItemDto> items = itemService.getItemsDtoBySearch(search, page);
+        Collection<ItemDto> items = itemServiceImpl.getItemsDtoBySearch(search, page);
         List<ItemDto> itemsList = new ArrayList<>(items);
 
         assertEquals(itemsList.size(), 0);
@@ -394,7 +394,7 @@ public class ItemServiceImplTest {
                 .thenReturn(bookings);
         when(commentRepository.save(any(Comment.class))).thenReturn(expectedComment);
 
-        CommentDto actualComment = itemService.addCommentToItem(1L, 1L, toCommentDto(expectedComment));
+        CommentDto actualComment = itemServiceImpl.addCommentToItem(1L, 1L, toCommentDto(expectedComment));
 
         assertEquals(toCommentDto(expectedComment), actualComment);
     }
@@ -406,7 +406,7 @@ public class ItemServiceImplTest {
                 .validateCommentData(toCommentDto(comment));
 
         DataValidationException dataValidationException = assertThrows(DataValidationException.class,
-                () -> itemService.addCommentToItem(1L, 1L, toCommentDto(comment)));
+                () -> itemServiceImpl.addCommentToItem(1L, 1L, toCommentDto(comment)));
 
         assertEquals(dataValidationException.getMessage(), "Комментарий не может быть пустым");
     }
@@ -417,7 +417,7 @@ public class ItemServiceImplTest {
         when(userValidator.checkingUserId(1L)).thenThrow(new DataNotFoundException("Пользователя не существует!"));
 
         DataNotFoundException entityNotFoundException = assertThrows(DataNotFoundException.class,
-                () -> itemService.addCommentToItem(1L, 1L, toCommentDto(comment)));
+                () -> itemServiceImpl.addCommentToItem(1L, 1L, toCommentDto(comment)));
 
         assertEquals(entityNotFoundException.getMessage(), "Пользователя не существует!");
     }
@@ -434,7 +434,7 @@ public class ItemServiceImplTest {
                 .thenReturn(new ArrayList<>());
 
         DataValidationException dataValidationException = assertThrows(DataValidationException.class,
-                () -> itemService.addCommentToItem(1L, 1L, toCommentDto(expectedComment)));
+                () -> itemServiceImpl.addCommentToItem(1L, 1L, toCommentDto(expectedComment)));
 
         assertEquals(dataValidationException.getMessage(), "Данный пользователь не бронировал вещь");
     }
