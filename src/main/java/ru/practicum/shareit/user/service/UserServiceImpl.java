@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.validator.UserValidator;
+import ru.practicum.shareit.validator.UserValidatorService;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserValidator userValidator;
+    private final UserValidatorService userValidator;
 
     @Transactional
     @Override
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void delete(long id) {
-        userValidator.checkingUserIdAndNotReturns(id);
+        userValidator.checkingUserIdAndNotReturn(id);
             userRepository.deleteById(id);
     }
 

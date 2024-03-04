@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.validator.PageValidator;
+import ru.practicum.shareit.validator.PageValidatorService;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -23,7 +23,7 @@ import java.util.Collection;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
-    private final PageValidator validator;
+    private final PageValidatorService validator;
     private static final String OWNER = "X-Sharer-User-Id";
 
     @PostMapping

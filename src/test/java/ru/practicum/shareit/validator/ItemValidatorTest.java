@@ -18,10 +18,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ItemValidatorTest {
     @Mock
-    ItemRepository repository;
+   private ItemRepository repository;
 
     @InjectMocks
-    ItemValidator itemValidator;
+   private ItemValidatorService itemValidator;
 
 
     @Test

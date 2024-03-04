@@ -20,10 +20,10 @@ import static org.mockito.Mockito.when;
 public class BookingValidatorTest {
 
     @Mock
-    BookingRepository bookingRepository;
+   private BookingRepository bookingRepository;
 
     @InjectMocks
-    BookingValidator bookingValidator;
+   private BookingValidatorService bookingValidator;
 
     @Test
     void validateBookingState_whenStateIsIncorrect_thenThrowUnsupportedStatusException() {
@@ -38,7 +38,7 @@ public class BookingValidatorTest {
         when(bookingRepository.findById(anyLong())).thenThrow(new DataNotFoundException("Бронирования не существует"));
 
         DataNotFoundException exception = assertThrows(DataNotFoundException.class,
-                () -> bookingValidator.validateAndReturnsBooking(1L));
+                () -> bookingValidator.validateBooking(1L));
 
         assertEquals(exception.getMessage(), "Бронирования не существует");
     }
@@ -46,7 +46,7 @@ public class BookingValidatorTest {
     @Test
     void validateBookingId_whenBookingIdLessThanZero_thenThrowIncorrectDataException() {
         DataNotFoundException exception = assertThrows(DataNotFoundException.class,
-                () -> bookingValidator.validateAndReturnsBooking(-1L));
+                () -> bookingValidator.validateBooking(-1L));
 
         assertEquals(exception.getMessage(), "Номер бронирования не может быть меньше 0");
     }
@@ -56,7 +56,7 @@ public class BookingValidatorTest {
         when(bookingRepository.findById(anyLong())).thenThrow(new DataNotFoundException("Бронирования не существует"));
 
         DataNotFoundException exception = assertThrows(DataNotFoundException.class,
-                () -> bookingValidator.validateAndReturnsBookingDto(1L));
+                () -> bookingValidator.validateBookingDto(1L));
 
         assertEquals(exception.getMessage(), "Бронирования не существует");
     }
@@ -66,7 +66,7 @@ public class BookingValidatorTest {
         Booking booking = new Booking();
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        Booking actual =  bookingValidator.validateAndReturnsBooking(1L);
+        Booking actual =  bookingValidator.validateBooking(1L);
 
         assertEquals(actual, booking);
     }

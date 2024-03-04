@@ -10,7 +10,7 @@ public class PageValidatorTest {
 
     @Test
     void checkingPageableParams_whenParamsIncorrect_thenThrowIncorrectDataException() {
-        PageValidator validator = new PageValidator();
+        PageValidatorService validator = new PageValidatorService();
 
         IncorrectNumberPageException exception = assertThrows(IncorrectNumberPageException.class,
                 () -> validator.checkingPageableParams(-1, -2));

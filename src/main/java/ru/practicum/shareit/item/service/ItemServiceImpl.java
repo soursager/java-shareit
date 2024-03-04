@@ -23,8 +23,8 @@ import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validator.ItemValidator;
-import ru.practicum.shareit.validator.UserValidator;
+import ru.practicum.shareit.validator.ItemValidatorService;
+import ru.practicum.shareit.validator.UserValidatorService;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -40,8 +40,8 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final RequestRepository requestRepository;
-    private final UserValidator userValidator;
-    private final ItemValidator itemValidator;
+    private final UserValidatorService userValidator;
+    private final ItemValidatorService itemValidator;
 
     @Transactional
     @Override
@@ -60,7 +60,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ItemDto updateItemDto(ItemDto itemDto, long userId, long itemId) {
-         userValidator.checkingUserIdAndNotReturns(userId);
+         userValidator.checkingUserIdAndNotReturn(userId);
          Item itemOld = itemValidator.validateItemId(itemId);
         if (!itemOld.getOwner().getId().equals(userId)) {
             throw new DataNotFoundException("У пользователя нет такой вещи!");
@@ -82,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     @Override
     public ItemDto getItemDtoById(long itemId, long userId) {
-        userValidator.checkingUserIdAndNotReturns(userId);
+        userValidator.checkingUserIdAndNotReturn(userId);
         List<CommentDto> commentsForItem = commentRepository.findAllByItem_Id(itemId)
                 .stream()
                 .map(CommentMapper::toCommentDto)
@@ -112,7 +112,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     @Override
     public Collection<ItemDto> getItemsDtoByUserId(long userId, Pageable page) {
-        userValidator.checkingUserIdAndNotReturns(userId);
+        userValidator.checkingUserIdAndNotReturn(userId);
         Pageable pageForItems = PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by(Sort.Direction.ASC,
                 "id"));
         Pageable pageForComments = PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by(Sort.Direction.DESC,

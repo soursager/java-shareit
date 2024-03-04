@@ -18,10 +18,10 @@ import static org.mockito.Mockito.when;
 public class UserValidatorTest {
 
     @Mock
-    UserRepository userRepository;
+   private UserRepository userRepository;
 
     @InjectMocks
-    UserValidator userValidator;
+   private UserValidatorService userValidator;
 
     @Test
     void validateUserId_whenUserNotExists_thenThrowEntityNotFoundException() {
@@ -64,7 +64,7 @@ public class UserValidatorTest {
     @Test
     void validateUserData_returnUserIfExists() {
        DataNotFoundException exception = assertThrows(DataNotFoundException.class,
-                () -> userValidator.checkingUserIdAndNotReturns(1L));
+                () -> userValidator.checkingUserIdAndNotReturn(1L));
 
         assertEquals(exception.getMessage(), "Пользователя под номером : 1 не существует!");
     }

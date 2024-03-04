@@ -18,9 +18,9 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validator.BookingValidator;
-import ru.practicum.shareit.validator.ItemValidator;
-import ru.practicum.shareit.validator.UserValidator;
+import ru.practicum.shareit.validator.BookingValidatorService;
+import ru.practicum.shareit.validator.ItemValidatorService;
+import ru.practicum.shareit.validator.UserValidatorService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,9 +35,9 @@ public class BookingServiceImpl implements BookingService {
     private static final Sort SORT_BY_START_DESC = Sort.by(Sort.Direction.DESC, "start");
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
-    private final UserValidator userValidator;
-    private final ItemValidator itemValidator;
-    private final BookingValidator bookingValidator;
+    private final UserValidatorService userValidator;
+    private final ItemValidatorService itemValidator;
+    private final BookingValidatorService bookingValidator;
 
     @Transactional
     @Override
@@ -67,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto approveBooking(Long bookingId, Long ownerId, String approve) {
         userValidator.checkingUserId(ownerId);
-        Booking bookingFromDb = bookingValidator.validateAndReturnsBooking(bookingId);
+        Booking bookingFromDb = bookingValidator.validateBooking(bookingId);
         BookingDto bookingDto = BookingMapper.toBookingDto(bookingFromDb);
 
         if (!Objects.equals(bookingDto.getItem().getOwner().getId(), ownerId)) {
@@ -93,7 +93,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto getBookingInfo(Long bookingId, Long userId) {
         userValidator.checkingUserId(userId);
-        BookingDto bookingDto = bookingValidator.validateAndReturnsBookingDto(bookingId);
+        BookingDto bookingDto = bookingValidator.validateBookingDto(bookingId);
         if (!Objects.equals(bookingDto.getItem().getOwner().getId(), userId)
                 && !Objects.equals(bookingDto.getBooker().getId(), userId)) {
             throw new DataNotFoundException("Пользователь под номером: " + userId + " не является владельцем!");

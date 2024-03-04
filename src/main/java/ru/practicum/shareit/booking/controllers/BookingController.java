@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.validator.PageValidator;
+import ru.practicum.shareit.validator.PageValidatorService;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
 public class BookingController {
     private static final String USER_ID = "X-Sharer-User-Id";
     private final BookingService service;
-    private final PageValidator validator;
+    private final PageValidatorService validator;
 
     @PostMapping
     public BookingDto createBooking(@RequestBody BookingDto bookingDto,

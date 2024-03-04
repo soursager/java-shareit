@@ -20,10 +20,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class RequestValidatorTest {
     @Mock
-    RequestRepository requestRepository;
+   private RequestRepository requestRepository;
 
     @InjectMocks
-    RequestValidator requestValidator;
+   private RequestValidatorService requestValidator;
 
     @Test
     void validateItemRequestId_whenRequestNotExists_thenThrowEntityNotFoundException() {
@@ -49,7 +49,7 @@ public class RequestValidatorTest {
         ItemRequest request = new ItemRequest();
         when(requestRepository.findById(anyLong())).thenReturn(Optional.of(request));
 
-        ItemRequest actual =  requestValidator.validateItemRequestIdAndReturns(1L);
+        ItemRequest actual =  requestValidator.validateItemRequestIdAndReturn(1L);
 
         assertEquals(actual, request);
     }
@@ -59,7 +59,7 @@ public class RequestValidatorTest {
         when(requestRepository.findById(anyLong())).thenThrow(new DataNotFoundException("Не запроса с таким номером"));
 
         DataNotFoundException exception = assertThrows(DataNotFoundException.class,
-                () -> requestValidator.validateItemRequestIdAndReturns(1L));
+                () -> requestValidator.validateItemRequestIdAndReturn(1L));
 
         assertEquals(exception.getMessage(), "Не запроса с таким номером");
     }
@@ -67,7 +67,7 @@ public class RequestValidatorTest {
     @Test
     void validateItemRequestIdAndReturns_whenRequestIdLessThanZero_thenThrowIncorrectDataException() {
         DataValidationException exception = assertThrows(DataValidationException.class,
-                () -> requestValidator.validateItemRequestIdAndReturns(-1L));
+                () -> requestValidator.validateItemRequestIdAndReturn(-1L));
 
         assertEquals(exception.getMessage(), "Не может существовать запроса с номером меньше 0");
     }
