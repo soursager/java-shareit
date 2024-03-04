@@ -66,6 +66,6 @@ public class UserValidatorTest {
        DataNotFoundException exception = assertThrows(DataNotFoundException.class,
                 () -> userValidator.checkingUserIdAndNotReturn(1L));
 
-        assertEquals(exception.getMessage(), "Пользователя под номером : 1 не существует!");
+        assertEquals(exception.getMessage(), "Пользователь по id - 1 не найден");
     }
 }
