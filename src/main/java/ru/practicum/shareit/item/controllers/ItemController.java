@@ -2,10 +2,13 @@ package ru.practicum.shareit.item.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.validator.PageValidatorService;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -19,7 +22,8 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemServiceImpl itemService;
+    private final ItemService itemService;
+    private final PageValidatorService validator;
     private static final String OWNER = "X-Sharer-User-Id";
 
     @PostMapping
@@ -35,9 +39,13 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemDto> getItemsByOwner(@RequestHeader(OWNER) Long ownerId) {
+    public Collection<ItemDto> getItemsByOwner(@RequestHeader(OWNER) Long ownerId,
+                                               @RequestParam(defaultValue = "0") Integer from,
+                                               @RequestParam(defaultValue = "10") Integer size) {
+        validator.checkingPageableParams(from, size);
         log.info("Выполняется запрос на вывод всех вещей пользователя под номером {}", ownerId);
-        return itemService.getItemsDtoByUserId(ownerId);
+        Pageable page = PageRequest.of(from / size, size);
+        return itemService.getItemsDtoByUserId(ownerId, page);
     }
 
     @PatchMapping("/{itemId}")
@@ -48,9 +56,13 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> getItemsBySearchQuery(@RequestParam String text) {
+    public Collection<ItemDto> getItemsBySearchQuery(@RequestParam String text,
+                                                     @RequestParam(defaultValue = "0") Integer from,
+                                                     @RequestParam(defaultValue = "10") Integer size) {
+        validator.checkingPageableParams(from, size);
         log.info("Выполняется запрос поиска вещи по строке {}", text);
-        return itemService.getItemsDtoBySearch(text);
+        Pageable page = PageRequest.of(from / size, size);
+        return itemService.getItemsDtoBySearch(text, page);
     }
 
     @PostMapping("/{itemId}/comment")
@@ -58,6 +70,6 @@ public class ItemController {
                                           @RequestHeader(OWNER) Long userId) {
         log.debug("Создание комментария к элементу по идентификатору пользователя {}", userId);
         comment.setCreated(LocalDateTime.now());
-        return itemService.addCommentToItem((long) userId, itemId, comment);
+        return itemService.addCommentToItem(userId, itemId, comment);
     }
 }
