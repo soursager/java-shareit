@@ -14,6 +14,7 @@ import java.util.Map;
 @Service
 public class RequestClient extends BaseClient {
     private static final String API_PREFIX = "/requests";
+    private final String getAllRequests = "/all?from={from}&size={size}";
 
     @Autowired
     public RequestClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
@@ -38,7 +39,7 @@ public class RequestClient extends BaseClient {
                 "from", from,
                 "size", size
         );
-        return get("/all?from={from}&size={size}", userId, parameters);
+        return get(getAllRequests, userId, parameters);
     }
 
     public ResponseEntity<Object> getRequestById(long userId, long requestId) {
